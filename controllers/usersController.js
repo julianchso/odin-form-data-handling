@@ -16,6 +16,9 @@ exports.usersCreateGet = (req, res) => {
 
 const alphaErr = 'must only contain letters.';
 const lengthErr = 'must be between 1 and 10 characters.';
+const emailErr = 'must be a valid email address.';
+const ageErr = 'must be between 18 and 120.';
+const bioErr = 'maximum length is 200 characters.';
 
 const validateUser = [
   body('firstName')
@@ -30,6 +33,9 @@ const validateUser = [
     .withMessage(`Last name ${alphaErr}`)
     .isLength({ min: 1, max: 10 })
     .withMessage(`Last name ${lengthErr}`),
+  body('email').trim().isEmail().notEmpty().withMessage(`Email: ${emailErr}`),
+  body('age').trim().isInt({ min: 18, max: 120 }).withMessage(`Age: ${ageErr}`),
+  body('bio').trim().isLength({ max: 200 }).withMessage(`Bio:${bioErr}`),
 ];
 
 exports.usersCreatePost = [
@@ -42,8 +48,8 @@ exports.usersCreatePost = [
         errors: errors.array(),
       });
     }
-    const { firstName, lastName } = req.body;
-    usersStorage.addUser({ firstName, lastName });
+    const { firstName, lastName, email, age, bio } = req.body;
+    usersStorage.addUser({ firstName, lastName, email, age, bio });
     res.redirect('/');
   },
 ];
